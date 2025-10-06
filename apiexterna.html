@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Externa - Consejos Aleatorios</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .advice-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 5px solid #007bff;
+            margin: 20px 0;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 1.2em;
+            color: #333;
+            transition: transform 0.3s, opacity 0.3s;
+        }
+        
+        .loading {
+            opacity: 0.6;
+        }
+        
+        button {
+            background: #007bff;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            display: block;
+            margin: 20px auto;
+            transition: background 0.3s, transform 0.2s;
+        }
+        
+        button:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .error {
+            background: #f8d7da;
+            border-left-color: #dc3545;
+            color: #721c24;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .stats {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Consejos Aleatorios</h1>
+        
+        <div id="advice-container" class="advice-card">
+            Presiona el botón para obtener un consejo...
+        </div>
+        
+        <button onclick="getAdvice()" id="advice-button">
+            Obtener Nuevo Consejo
+        </button>
+        
+        <div class="stats">
+            <p>Consejos obtenidos: <span id="counter">0</span></p>
+            <p>Última actualización: <span id="last-update">--:--:--</span></p>
+        </div>
+    </div>
+
+    <script>
+        let adviceCount = 0;
+        
+        async function getAdvice() {
+            const adviceContainer = document.getElementById('advice-container');
+            const adviceButton = document.getElementById('advice-button');
+            
+            // Mostrar estado de carga
+            adviceContainer.classList.add('loading');
+            adviceContainer.textContent = 'Cargando consejo...';
+            adviceButton.disabled = true;
+            
+            try {
+                const response = await fetch('https://api.adviceslip.com/advice');
+                
+                if (!response.ok) {
+                    throw new Error('Error en la respuesta de la API');
+                }
+                
+                const data = await response.json();
+                const advice = data.slip.advice;
+                
+                // Actualizar interfaz
+                adviceContainer.textContent = `"${advice}"`;
+                adviceContainer.classList.remove('loading', 'error');
+                adviceContainer.classList.add('fade-in');
+                
+                // Actualizar estadísticas
+                adviceCount++;
+                document.getElementById('counter').textContent = adviceCount;
+                document.getElementById('last-update').textContent = new Date().toLocaleTimeString();
+                
+            } catch (error) {
+                console.error('Error:', error);
+                adviceContainer.textContent = 'Error al cargar el consejo. Verifica tu conexión.';
+                adviceContainer.classList.remove('loading');
+                adviceContainer.classList.add('error');
+            } finally {
+                adviceButton.disabled = false;
+                
+                // Remover animación después de un tiempo
+                setTimeout(() => {
+                    adviceContainer.classList.remove('fade-in');
+                }, 1000);
+            }
+        }
+        
+        // Cargar un consejo al iniciar
+        getAdvice();
+    </script>
+</body>
+</html>
