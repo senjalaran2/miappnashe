@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contenido Interactivo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            transition: background-color 0.5s;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background: white;
+        }
+        
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background: #007bff;
+            color: white;
+        }
+        
+        #clock {
+            font-size: 2em;
+            text-align: center;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .quiz-option {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .quiz-option:hover {
+            background: #e9ecef;
+        }
+        
+        .correct {
+            background: #d4edda !important;
+            border-color: #c3e6cb !important;
+        }
+        
+        .incorrect {
+            background: #f8d7da !important;
+            border-color: #f5c6cb !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="section">
+            <h2>Reloj en Tiempo Real</h2>
+            <div id="clock">--:--:--</div>
+        </div>
+        
+        <div class="section">
+            <h2>Cambiador de Colores</h2>
+            <button onclick="changeBackgroundColor()">Cambiar Color de Fondo</button>
+            <button onclick="resetBackground()">Color Original</button>
+        </div>
+        
+        <div class="section">
+            <h2>Quiz Interactivo</h2>
+            <p><strong>Pregunta:</strong> ¿Qué significa API?</p>
+            
+            <button class="quiz-option" onclick="checkAnswer(this, false)">Aplicación Para Internet</button>
+            <button class="quiz-option" onclick="checkAnswer(this, false)">Apple Phone Interface</button>
+            <button class="quiz-option" onclick="checkAnswer(this, true)">Application Programming Interface</button>
+            <button class="quiz-option" onclick="checkAnswer(this, false)">Advanced Programming Input</button>
+            
+            <p id="quiz-result"></p>
+        </div>
+        
+        <div class="section">
+            <h2>Contador de Clics</h2>
+            <p>Clics: <span id="click-counter">0</span></p>
+            <button onclick="incrementCounter()">Haz Clic Aquí</button>
+        </div>
+    </div>
+
+    <script>
+        // Reloj en tiempo real
+        function updateClock() {
+            const now = new Date();
+            const time = now.toLocaleTimeString();
+            document.getElementById('clock').textContent = time;
+        }
+        
+        setInterval(updateClock, 1000);
+        updateClock();
+        
+        // Cambiador de colores
+        function changeBackgroundColor() {
+            const colors = ['#ffebee', '#e8f5e8', '#e3f2fd', '#fff3e0', '#f3e5f5'];
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            document.body.style.backgroundColor = randomColor;
+        }
+        
+        function resetBackground() {
+            document.body.style.backgroundColor = '';
+        }
+        
+        // Quiz interactivo
+        function checkAnswer(button, isCorrect) {
+            const options = document.querySelectorAll('.quiz-option');
+            options.forEach(opt => {
+                opt.onclick = null; // Deshabilitar más clics
+            });
+            
+            if (isCorrect) {
+                button.classList.add('correct');
+                document.getElementById('quiz-result').textContent = '¡Correcto!';
+                document.getElementById('quiz-result').style.color = 'green';
+            } else {
+                button.classList.add('incorrect');
+                document.getElementById('quiz-result').textContent = 'Incorrecto. La respuesta correcta es: Application Programming Interface';
+                document.getElementById('quiz-result').style.color = 'red';
+            }
+        }
+        
+        // Contador de clics
+        let clickCount = 0;
+        function incrementCounter() {
+            clickCount++;
+            document.getElementById('click-counter').textContent = clickCount;
+        }
+    </script>
+</body>
+</html>
